@@ -3,9 +3,9 @@
 Для получения токена аутентификации выполните запрос на эндпоинт /login.
 
 Пример запроса:
-curl -X POST "https://virtserver.swaggerhub.com/KATIARYK_1/Iba/1.0.0/login" \
+curl -X POST "https://virtserver.swaggerhub.com/KATIARYK_1/Iba//login" \
 -H "Content-Type: application/json" \
 -d '{
-  "username": "example@example.com",
-  "password": "password"
+  "username": "example@example.com", 
+    "password": "password"
 }'
