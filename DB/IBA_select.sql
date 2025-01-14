@@ -1,36 +1,36 @@
 USE `IBA_3` ;
 
--- Р’С‹Р±РѕСЂРєР° РѕРїР»Р°С‡РµРЅРЅС‹С… Р·Р°РєР°Р·РѕРІ РЅР° РєРѕРЅРєСЂРµС‚РЅСѓСЋ РґР°С‚Сѓ
+-- Выборка оплаченных заказов на конкретную дату
 SELECT * 
 FROM client_order
 WHERE client_cart_status_id = 6 
 AND DATE(update_time) = '2024-11-06';
 
--- РІС‹Р±РѕСЂРєР° РѕРїР»Р°С‡РµРЅРЅС‹С… Р·Р°РєР°Р·РѕРІ РЅР° РґР°С‚С‹ РІ РїСЂРѕРјРµР¶СѓС‚РєРµ
+-- выборка оплаченных заказов на даты в промежутке
 SELECT * 
 FROM client_order
 WHERE client_cart_status_id = 6 
 AND DATE(update_time) BETWEEN '2024-11-01' AND '2024-11-10';
 
--- Р’С‹Р±РѕСЂРєР° РѕРїР»Р°С‡РµРЅРЅС‹С… Р·Р°РєР°Р·РѕРІ РЅР° РїСЂРµРґС‹РґСѓС‰СѓСЋ РЅРµРґРµР»СЋ 
+-- Выборка оплаченных заказов на предыдущую неделю 
 SELECT * 
 FROM client_order
 WHERE client_cart_status_id = 6 
 AND update_time >= CURDATE() - INTERVAL 7 DAY;
 
--- Р’С‹Р±РѕСЂРєР° РѕРїР»Р°С‡РµРЅРЅС‹С… Р·Р°РєР°Р·РѕРІ Р·Р° РїСЂРµРґС‹РґСѓС‰РёР№ РјРµСЃСЏС†
+-- Выборка оплаченных заказов за предыдущий месяц
 SELECT * 
 FROM client_order
 WHERE client_cart_status_id = 6 
 AND create_time >= CURDATE() - INTERVAL 1 MONTH;
 
--- Р’С‹Р±РѕСЂРєР° РѕРїР»Р°С‡РµРЅРЅС‹С… Р·Р°РєР°Р·РѕРІ Р·Р° РїСЂРµРґС‹РґСѓС‰РёР№ РіРѕРґ 
+-- Выборка оплаченных заказов за предыдущий год 
 SELECT * 
 FROM client_order
 WHERE client_cart_status_id = 6 
 AND create_time >= CURDATE() - INTERVAL 1 YEAR;
 
--- Р’С‹Р±РѕСЂРєР° РїРѕ СЃСѓРјРјР°Рј РєРѕСЂР·РёРЅ РєР»РёРµРЅС‚РѕРІ Р±РѕР»СЊС€Рµ СЃСЂРµРґРЅРµРіРѕ Р·РЅР°С‡РµРЅРёСЏ СЃСѓРјРј РєРѕСЂР·РёРЅ РєР»РёРµРЅС‚РѕРІ
+-- Выборка по суммам корзин клиентов больше среднего значения сумм корзин клиентов
 SELECT 
     COUNT(*) AS total_count,  
     SUM(amount_product_sum) AS total_sum  
@@ -41,7 +41,7 @@ WHERE
     SELECT AVG(amount_product_sum) 
     FROM client_order_detail);
 
---  Р’С‹Р±РѕСЂРєР° РїРѕ СЃСѓРјРјР°Рј Рё РєРѕР»РёС‡РµСЃС‚РІСѓ РѕРїР»Р°С‡РµРЅРЅС‹С… Р·Р°РєР°Р·РѕРІ Р±РѕР»СЊС€Рµ СЃСЂРµРґРЅРµРіРѕ Р·РЅР°С‡РµРЅРёСЏ РїРѕ РѕРїР»Р°С‡РµРЅРЅС‹Рј Р·Р°РєР°Р·Р°Рј 
+--  Выборка по суммам и количеству оплаченных заказов больше среднего значения по оплаченным заказам 
 SELECT 
     COUNT(*) AS total_count,
     SUM(amount_product_sum) AS total_sum  
@@ -56,23 +56,23 @@ WHERE
       FROM client_order_detail)
     AND co.client_cart_status_id = 6;
 
--- РЎСЂРµРґРЅСЏСЏ СЃСѓРјРјР° РїСЂРѕРґР°Р¶ РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРЅРѕР№ РєР°С‚РµРіРѕСЂРёРё С‚РѕРІР°СЂРѕРІ Р·Р° СѓРєР°Р·Р°РЅРЅС‹Р№ РїРµСЂРёРѕРґ 
+-- Средняя сумма продаж для определенной категории товаров за указанный период 
 SELECT 
-    AVG(cod.amount_product_sum) AS avg_sale_amount  -- РЎСЂРµРґРЅСЏСЏ СЃСѓРјРјР° РїСЂРѕРґР°Р¶Рё
+    AVG(cod.amount_product_sum) AS avg_sale_amount  -- Средняя сумма продажи
 FROM 
     client_order_detail AS cod
 JOIN 
     client_order AS co 
-    ON cod.client_cart_id = co.client_cart_id  -- РџСЂРёСЃРѕРµРґРёРЅРµРЅРёРµ С‚Р°Р±Р»РёС†С‹ СЃ Р·Р°РєР°Р·Р°РјРё
+    ON cod.client_cart_id = co.client_cart_id  -- Присоединение таблицы с заказами
 JOIN 
     product p 
-    ON cod.product_id = p.product_id  -- РџСЂРёСЃРѕРµРґРёРЅРµРЅРёРµ С‚Р°Р±Р»РёС†С‹ СЃ С‚РѕРІР°СЂР°РјРё
+    ON cod.product_id = p.product_id  -- Присоединение таблицы с товарами
 WHERE 
     p.product_group_id = 1  
     AND co.client_cart_status_id = 6
     AND co.update_time BETWEEN '2024-01-01' AND '2024-11-11'; 
 
---  РЎСЂРµРґРЅСЏСЏ СЃСѓРјРјР° РїСЂРѕРґР°Р¶ РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРЅРѕР№ РєР°С‚РµРіРѕСЂРёРё С‚РѕРІР°СЂРѕРІ Р·Р° СѓРєР°Р·Р°РЅРЅС‹Р№ РїРµСЂРёРѕРґ
+--  Средняя сумма продаж для определенной категории товаров за указанный период
 SELECT 
     pg.group_name, 
     AVG(cod.amount_product_sum) AS avg_sale_amount 
@@ -94,7 +94,7 @@ WHERE
 GROUP BY 
     pg.group_name;  
 
--- РЎСЂРµРґРЅСЏСЏ СЃСѓРјРјР° РїСЂРѕРґР°Р¶ РѕРїСЂРµРґРµР»РµРЅРЅРѕРіРѕ С‚РѕРІР°СЂР° Р·Р° СѓРєР°Р·Р°РЅРЅС‹Р№ РїРµСЂРёРѕРґ 
+-- Средняя сумма продаж определенного товара за указанный период 
 SELECT 
     p.product_name, AVG(cod.amount_product_sum) AS avg_sale_amount  
 FROM 
@@ -112,7 +112,7 @@ WHERE
 GROUP BY 
     p.product_name; 
 
--- РљРѕР»РёС‡РµСЃС‚РІРѕ С‚РѕРІР°СЂРЅС‹С… РЅР°РёРјРµРЅРѕРІР°РЅРёР№ РІ РєР°Р¶РґРѕР№ РіСЂСѓРїРїРµ 
+-- Количество товарных наименований в каждой группе 
 SELECT 
     pg.group_name,    
     COUNT(p.product_id) AS product_count 
@@ -124,7 +124,7 @@ LEFT JOIN
 GROUP BY 
     pg.group_name; 
 
--- Р’С‹Р±РѕСЂРєР° РіСЂСѓРїРї С‚РѕРІР°СЂРѕРІ, Сѓ РєРѕС‚РѕСЂС‹С… РЅРµС‚ С‚РѕРІР°СЂРѕРІ 
+-- Выборка групп товаров, у которых нет товаров 
 SELECT 
     pg.product_group_id,      
     pg.group_name             
@@ -136,16 +136,15 @@ LEFT JOIN
 WHERE 
     p.product_id IS NULL; 
 
--- Р’Р°СЂРёР°РЅС‚ 2 
+-- Вариант 2 
 SELECT 
     pg.product_group_id,      
     pg.group_name            
 FROM 
     product_group AS pg
 WHERE 
-     NOT EXISTS (         -- РїСЂРѕРІРµСЂСЏРµС‚, С‡С‚Рѕ РІ РїРѕРґР·Р°РїСЂРѕСЃРµ РќР•Рў РЅРё РѕРґРЅРѕР№ СЃС‚СЂРѕРєРё
+     NOT EXISTS (         -- проверяет, что в подзапросе НЕТ ни одной строки
         SELECT 1
         FROM product AS p
         WHERE p.product_group_id = pg.product_group_id
     );
-
